@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\Controllers",
+    "\\src\\Dtos",
+    "\\src\\Entities",
+    "\\src\\Infra",
+    "\\src\\Interfaces",
+    "\\src\\Services"
+  ],
+  "SelectedNode": "\\src\\Infra\\ApplicationDbContext.cs",
+  "PreviewInSolutionExplorer": false
+}
