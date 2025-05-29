@@ -1,8 +1,10 @@
 using AgendaApp.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Agenda.Infra.Data { 
-    public class ApplicationDbContext : DbContext {
+namespace AgendaApp.Infra.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -10,15 +12,20 @@ namespace Agenda.Infra.Data {
         public DbSet<Paciente> Pacientes { get; set; }
         public DbSet<Consulta> Consultas { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) { 
-            
-            base.oModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Medico>()
                 .HasMany(m => m.Consultas)
                 .WithOne(c => c.Medico)
                 .HasForeignKey(c => c.MedicoId);
 
+            modelBuilder.Entity<Medico>()
+                .HasIndex(m => m.Crm)
+                .IsUnique();
+                
             modelBuilder.Entity<Paciente>()
                 .HasMany(p => p.Consultas)
                 .WithOne(c => c.Paciente)

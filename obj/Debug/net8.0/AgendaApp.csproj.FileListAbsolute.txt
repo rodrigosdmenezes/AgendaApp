@@ -151,3 +151,13 @@ G:\AgendaApp\obj\Debug\net8.0\refint\AgendaApp.dll
 G:\AgendaApp\obj\Debug\net8.0\AgendaApp.pdb
 G:\AgendaApp\obj\Debug\net8.0\AgendaApp.genruntimeconfig.cache
 G:\AgendaApp\obj\Debug\net8.0\ref\AgendaApp.dll
+G:\AgendaApp\obj\Debug\net8.0\AgendaApp.sourcelink.json
+G:\AgendaApp\bin\Debug\net8.0\BCrypt.Net-Next.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+G:\AgendaApp\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+G:\AgendaApp\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

@@ -9,7 +9,8 @@ namespace AgendaApp.Entities {
 
         public string Email { get; set; }
         public string Senha { get; set; }
+        public string Crm { get; set; }
 
-        public List<Consultas> Consultas { get; set; }
+        public List<Consulta> Consultas { get; set; }
     }
 }
