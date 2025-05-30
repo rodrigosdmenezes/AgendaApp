@@ -25,11 +25,14 @@ namespace AgendaApp.Infra.Data
             modelBuilder.Entity<Medico>()
                 .HasIndex(m => m.Crm)
                 .IsUnique();
-                
+
             modelBuilder.Entity<Paciente>()
                 .HasMany(p => p.Consultas)
                 .WithOne(c => c.Paciente)
                 .HasForeignKey(c => c.PacienteId);
+            modelBuilder.Entity<Consulta>()
+                .Property(c => c.Status)
+                .HasConversion<string>();
 
         }
 

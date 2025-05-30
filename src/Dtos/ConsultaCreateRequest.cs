@@ -8,7 +8,7 @@ namespace AgendaApp.src.Dtos
     public class ConsultaCreateRequest
     {
         public Guid MedicoId { get; set; }
-        public Guid PacienteId { get; set; }
+        public Guid? PacienteId { get; set; }
         public DateTime DataHora { get; set; }
     }
 }
