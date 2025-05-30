@@ -7,7 +7,7 @@ namespace AgendaApp.Entities
     {
         public Guid Id { get; set; }
         public DateTime DataHora { get; set; }
-        public bool Ocupado { get; set; }
+        public string Status { get; set; }
 
         public Guid MedicoId { get; set; }
         public Medico Medico { get; set; }
