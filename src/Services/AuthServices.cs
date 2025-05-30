@@ -29,16 +29,19 @@ namespace AgendaApp.src.Services
         {
             // Verificar se email já está em uso
             if (await _context.Pacientes.AnyAsync(p => p.Email == request.Email))
-                return new AuthResult { Success = false, Message  =  "Email já cadastrado." };
+                return new AuthResult { Success = false, Message = "Email já cadastrado." };
+            if (await _context.Medicos.AnyAsync(m => m.Cpf == request.Cpf))
+                return new AuthResult { Success = false, Message = "CPF já cadastrado." };    
 
             var paciente = new Paciente
             {
                 Nome = request.Nome,
+                Cpf = request.Cpf,
                 Email = request.Email,
-                // outros campos...
+                Senha = request.Senha
             };
 
-            paciente.SenhaHash = _passwordHasher.HashPassword(null, request.Senha);
+            paciente.Senha = _passwordHasher.HashPassword(null, request.Senha);
 
             _context.Pacientes.Add(paciente);
             await _context.SaveChangesAsync();
@@ -50,22 +53,24 @@ namespace AgendaApp.src.Services
 
         public async Task<AuthResult> RegisterMedicoAsync(RegisterMedicoRequest request)
         {
-            // Verificar se email ou CRM já estão em uso
             if (await _context.Medicos.AnyAsync(m => m.Email == request.Email))
-                return new AuthResult { Success = false, Message  =  "Email já cadastrado." };
+                return new AuthResult { Success = false, Message = "Email já cadastrado." };
 
             if (await _context.Medicos.AnyAsync(m => m.Crm == request.Crm))
-                return new AuthResult { Success = false, Message  = "CRM já cadastrado." };
+                return new AuthResult { Success = false, Message = "CRM já cadastrado." };
+            if (await _context.Medicos.AnyAsync(m => m.Cpf == request.Cpf))
+                return new AuthResult { Success = false, Message = "CPF já cadastrado." };
 
             var medico = new Medico
             {
                 Nome = request.Nome,
+                Cpf = request.Cpf,
                 Email = request.Email,
                 Crm = request.Crm,
-                // outros campos...
+                Especialidade = request.Especialidade
             };
 
-            medico.SenhaHash = _passwordHasher.HashPassword(null, request.Senha);
+            medico.Senha = _passwordHasher.HashPassword(null, request.Senha);
 
             _context.Medicos.Add(medico);
             await _context.SaveChangesAsync();
@@ -81,7 +86,7 @@ namespace AgendaApp.src.Services
             var medico = await _context.Medicos.FirstOrDefaultAsync(m => m.Email == request.Email);
             if (medico != null)
             {
-                var result = _passwordHasher.VerifyHashedPassword(null, medico.SenhaHash, request.Senha);
+                var result = _passwordHasher.VerifyHashedPassword(null, medico.Senha, request.Senha);
                 if (result == PasswordVerificationResult.Success)
                 {
                     var token = GenerateJwtToken(medico.Id.ToString(), "Medico");
@@ -92,7 +97,7 @@ namespace AgendaApp.src.Services
             var paciente = await _context.Pacientes.FirstOrDefaultAsync(p => p.Email == request.Email);
             if (paciente != null)
             {
-                var result = _passwordHasher.VerifyHashedPassword(null, paciente.SenhaHash, request.Senha);
+                var result = _passwordHasher.VerifyHashedPassword(null, paciente.Senha, request.Senha);
                 if (result == PasswordVerificationResult.Success)
                 {
                     var token = GenerateJwtToken(paciente.Id.ToString(), "Paciente");
@@ -100,7 +105,7 @@ namespace AgendaApp.src.Services
                 }
             }
 
-            return new AuthResult { Success = false, Errors = new[] { "Email ou senha inválidos." } };
+            return new AuthResult { Success = false, Message = "Email ou senha inválidos." };
         }
 
         // Método privado para gerar token JWT
