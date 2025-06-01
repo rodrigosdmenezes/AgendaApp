@@ -5,9 +5,10 @@ namespace AgendaApp.src.Interfaces
 {
     public interface IConsultaService
     {
-        Task<ConsultaResponse> CriarConsultaAsync(ConsultaCreateRequest request);
-        Task<IEnumerable<ConsultaResponse>> ListarConsultasAsync();
+        Task<ConsultaResponse> DisponibilizarHorarioAsync(ConsultaCreateRequest request);
         Task<ConsultaResponse> ObterConsultaPorIdAsync(Guid id);
+        Task<IEnumerable<ConsultaResponse>> ListarConsultasAsync();
         Task<bool> CancelarConsultaAsync(Guid consultaId, Guid usuarioId, string tipoUsuario);
+        Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest  request);
     }
 }

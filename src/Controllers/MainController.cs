@@ -12,10 +12,10 @@ namespace AgendaApp.Controllers
         private readonly IAuthService _authService;
         private readonly IConsultaService _consultaService;
 
-        public AuthController(IAuthService authService)
+        public MainController(IAuthService authService, IConsultaService consultaService)
         {
             _authService = authService;
-            _consultaService ConsultaService;
+            _consultaService = consultaService;
         }
 
         // ENDPOINTS PARA AUTENTICAÇÃO E LOGIN
@@ -50,24 +50,40 @@ namespace AgendaApp.Controllers
         }
 
         // ENDPOINTS PARA AS CONSULTAS
+        [HttpPost("consulta/disponibilizar")]
+        public async Task<IActionResult> DisponibilizarHorario([FromBody] ConsultaCreateRequest request)
+        {
+            var response = await _consultaService.DisponibilizarHorarioAsync(request);
+            return Ok(response);
+        }
+
         [Authorize]
         [HttpPost("consulta")]
-        public async Task<IActionResult> CriarConsulta([FromBody] ConsultaCreateRequest request){
-            var result = await _consultaService.CriarConsultaAsync(request);
-            return Ok(result.Success);
+        public async Task<IActionResult> CriarConsulta([FromBody] ConsultaCreateRequest request)
+        {
+            var result = await _consultaService.AgendarConsultaAsync(request);
+            return Ok(result);
         }
 
         [Authorize]
         [HttpGet("consulta")]
-        public async Task<IActionResult>ListarConsultas(){
+        public async Task<IActionResult> ListarConsultas()
+        {
             var result = await _consultaService.ListarConsultasAsync();
-            return Ok(result.Success);
+            return Ok(result);
         }
-        
+
         [Authorize]
         [HttpPut("consulta/cancelar/{id}")]
-        public async Task<IActionResult>CancelarConsultas(Guid id){
-            await _consultaService.CancelarConsultasAsync(id);
+        public async Task<IActionResult> CancelarConsultas(Guid id)
+        {
+            var usuarioId = Guid.Parse(User.FindFirst("id").Value);
+            var tipoUsuario = User.FindFirst("tipoUsuario").Value;
+
+            var result = await _consultaService.CancelarConsultaAsync(id, usuarioId, tipoUsuario);
+            if (!result)
+                return BadRequest("Não foi possível cancelar a consulta.");
+
             return NoContent();
         }
     }

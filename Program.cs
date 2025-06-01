@@ -8,7 +8,7 @@ using AgendaApp.src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var key= Encoding.ASCII.GetBytes("b7f5e9c2d3a14f8e9b6c1d3e7a9f0b2c4d6e8f1a3c5b7d9e0f2a4c6e8b0d3f1a");
+var key = Encoding.ASCII.GetBytes("b7f5e9c2d3a14f8e9b6c1d3e7a9f0b2c4d6e8f1a3c5b7d9e0f2a4c6e8b0d3f1a");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -22,8 +22,13 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false
+
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+        ClockSkew = TimeSpan.Zero
     };
 });
 

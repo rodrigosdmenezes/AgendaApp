@@ -31,7 +31,7 @@ namespace AgendaApp.src.Services
             if (await _context.Pacientes.AnyAsync(p => p.Email == request.Email))
                 return new AuthResult { Success = false, Message = "Email já cadastrado." };
             if (await _context.Medicos.AnyAsync(m => m.Cpf == request.Cpf))
-                return new AuthResult { Success = false, Message = "CPF já cadastrado." };    
+                return new AuthResult { Success = false, Message = "CPF já cadastrado." };
 
             var paciente = new Paciente
             {
@@ -46,7 +46,7 @@ namespace AgendaApp.src.Services
             _context.Pacientes.Add(paciente);
             await _context.SaveChangesAsync();
 
-            var token = GenerateJwtToken(paciente.Id.ToString(), "Paciente");
+            var token = GenerateJwtToken(paciente.Id, paciente.Email, "Paciente");
 
             return new AuthResult { Success = true, Token = token };
         }
@@ -75,7 +75,7 @@ namespace AgendaApp.src.Services
             _context.Medicos.Add(medico);
             await _context.SaveChangesAsync();
 
-            var token = GenerateJwtToken(medico.Id.ToString(), "Medico");
+            var token = GenerateJwtToken(medico.Id, medico.Email, "Medico");
 
             return new AuthResult { Success = true, Token = token };
         }
@@ -89,7 +89,7 @@ namespace AgendaApp.src.Services
                 var result = _passwordHasher.VerifyHashedPassword(null, medico.Senha, request.Senha);
                 if (result == PasswordVerificationResult.Success)
                 {
-                    var token = GenerateJwtToken(medico.Id.ToString(), "Medico");
+                    var token = GenerateJwtToken(medico.Id, medico.Email, "Medico");
                     return new AuthResult { Success = true, Token = token };
                 }
             }
@@ -100,7 +100,7 @@ namespace AgendaApp.src.Services
                 var result = _passwordHasher.VerifyHashedPassword(null, paciente.Senha, request.Senha);
                 if (result == PasswordVerificationResult.Success)
                 {
-                    var token = GenerateJwtToken(paciente.Id.ToString(), "Paciente");
+                    var token = GenerateJwtToken(paciente.Id, paciente.Email, "Paciente");
                     return new AuthResult { Success = true, Token = token };
                 }
             }
@@ -109,27 +109,29 @@ namespace AgendaApp.src.Services
         }
 
         // Método privado para gerar token JWT
-        private string GenerateJwtToken(string userId, string role)
+        private string GenerateJwtToken(Guid userId, string email, string role)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId),
-                new Claim(ClaimTypes.Role, role),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
+        new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+        new Claim(JwtRegisteredClaimNames.Email, email),
+        new Claim(ClaimTypes.Role, role),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

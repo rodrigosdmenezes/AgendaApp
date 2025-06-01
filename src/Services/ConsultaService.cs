@@ -1,13 +1,9 @@
-using AgendaApp.src.Data;
+using AgendaApp.Entities;
+using AgendaApp.Infra.Data;
 using AgendaApp.src.Dtos;
-using AgendaApp.src.Entities;
-using AgendaApp.src.Enums;
 using AgendaApp.src.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace AgendaApp.src.Services
 {
@@ -51,29 +47,40 @@ namespace AgendaApp.src.Services
         }
 
         // MÉTODO PARA O PACIENTE AGENDAR UMA CONSULTA
-        public async Task<ConsultaResponse> AgendarConsultaAsync(Guid consultaId, Guid pacienteId)
+        public async Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest request)
         {
-            var consulta = await _context.Consultas.Include(c => c.Medico).Include(c => c.Paciente)
-                .FirstOrDefaultAsync(c => c.Id == consultaId);
+            var dataHoraUtc = DateTime.SpecifyKind(request.DataHora, DateTimeKind.Utc);
+
+            var consulta = await _context.Consultas
+                .FirstOrDefaultAsync(c =>
+                    c.MedicoId == request.MedicoId &&
+                    c.DataHora == dataHoraUtc &&
+                    c.Status == ConsultaStatus.Disponivel);
 
             if (consulta == null)
-                throw new Exception("Consulta não encontrada.");
+                throw new Exception("Consulta não disponível.");
 
-            if (consulta.Status != ConsultaStatus.Disponivel)
-                throw new Exception("Consulta não está disponível para agendamento.");
-
-            var paciente = await _context.Pacientes.FindAsync(pacienteId)
-                ?? throw new Exception("Paciente não encontrado.");
-
-            consulta.PacienteId = pacienteId;
+            consulta.PacienteId = null; // Se não for usar ID de paciente agora
             consulta.Status = ConsultaStatus.Agendada;
-            consulta.Paciente = paciente;
 
             await _context.SaveChangesAsync();
 
-            return MapToResponse(consulta);
-        }
+            var nomeMedico = await _context.Medicos
+                .Where(u => u.Id == consulta.MedicoId)
+                .Select(u => u.Nome)
+                .FirstOrDefaultAsync();
 
+            return new ConsultaResponse
+            {
+                Id = consulta.Id,
+                MedicoId = consulta.MedicoId,
+                NomeMedico = nomeMedico,
+                PacienteId = null,
+                NomePaciente = request.NomePaciente,
+                DataHora = consulta.DataHora,
+                Status = consulta.Status
+            };
+        }
         // BUSCAR CONSULTA POR ID
         public async Task<ConsultaResponse> BuscarPorIdAsync(Guid id)
         {
@@ -134,12 +141,27 @@ namespace AgendaApp.src.Services
             {
                 Id = consulta.Id,
                 MedicoId = consulta.MedicoId,
-                MedicoNome = consulta.Medico?.Nome,
+                NomeMedico = consulta.Medico?.Nome,
                 PacienteId = consulta.PacienteId ?? Guid.Empty,
-                PacienteNome = consulta.Paciente?.Nome,
+                NomePaciente = consulta.Paciente?.Nome,
                 DataHora = consulta.DataHora,
-                EstaOcupada = consulta.Status == ConsultaStatus.Agendada
+                Status = consulta.Status
             };
+        }
+
+        public Task<IEnumerable<ConsultaResponse>> ListarConsultasAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ConsultaResponse> ObterConsultaPorIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IConsultaService.CancelarConsultaAsync(Guid consultaId, Guid usuarioId, string tipoUsuario)
+        {
+            throw new NotImplementedException();
         }
     }
 }
