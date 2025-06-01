@@ -47,7 +47,7 @@ namespace AgendaApp.src.Services
         }
 
         // MÉTODO PARA O PACIENTE AGENDAR UMA CONSULTA
-        public async Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest request)
+        public async Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest request, Guid pacienteId)
         {
             var dataHoraUtc = DateTime.SpecifyKind(request.DataHora, DateTimeKind.Utc);
 
@@ -76,7 +76,6 @@ namespace AgendaApp.src.Services
                 MedicoId = consulta.MedicoId,
                 NomeMedico = nomeMedico,
                 PacienteId = null,
-                NomePaciente = request.NomePaciente,
                 DataHora = consulta.DataHora,
                 Status = consulta.Status
             };

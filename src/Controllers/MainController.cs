@@ -2,6 +2,7 @@ using AgendaApp.src.Dtos;
 using AgendaApp.src.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AgendaApp.Controllers
 {
@@ -11,6 +12,12 @@ namespace AgendaApp.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IConsultaService _consultaService;
+
+        private Guid GetUserId()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Guid.Parse(userIdString);
+        }
 
         public MainController(IAuthService authService, IConsultaService consultaService)
         {
@@ -50,18 +57,22 @@ namespace AgendaApp.Controllers
         }
 
         // ENDPOINTS PARA AS CONSULTAS
+        [Authorize(Roles = "Medico")]
         [HttpPost("consulta/disponibilizar")]
         public async Task<IActionResult> DisponibilizarHorario([FromBody] ConsultaCreateRequest request)
         {
+            var medicoId = GetUserId();
+            request.MedicoId = medicoId;
             var response = await _consultaService.DisponibilizarHorarioAsync(request);
             return Ok(response);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Paciente")]
         [HttpPost("consulta")]
         public async Task<IActionResult> CriarConsulta([FromBody] ConsultaCreateRequest request)
         {
-            var result = await _consultaService.AgendarConsultaAsync(request);
+            var pacienteId = GetUserId();
+            var result = await _consultaService.AgendarConsultaAsync(request, pacienteId);
             return Ok(result);
         }
 

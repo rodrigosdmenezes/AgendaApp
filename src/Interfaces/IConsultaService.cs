@@ -9,6 +9,6 @@ namespace AgendaApp.src.Interfaces
         Task<ConsultaResponse> ObterConsultaPorIdAsync(Guid id);
         Task<IEnumerable<ConsultaResponse>> ListarConsultasAsync();
         Task<bool> CancelarConsultaAsync(Guid consultaId, Guid usuarioId, string tipoUsuario);
-        Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest  request);
+        Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest  request, Guid pacienteId);
     }
 }
