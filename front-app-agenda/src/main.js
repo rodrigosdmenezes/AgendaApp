@@ -1,12 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-import { createPinia } from 'pinia'  // importar Pinia
+import { createPinia } from 'pinia'
 
 const app = createApp(App)
 
-const pinia = createPinia()  // criar instância do Pinia
+const pinia = createPinia()
 
-app.use(pinia)  // registrar Pinia na app
+app.use(pinia)
 
 app.mount('#app')
