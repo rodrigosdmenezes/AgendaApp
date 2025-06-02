@@ -60,9 +60,9 @@ const form = reactive({
 
 const cadastrar = async () => {
   try {
-    await axios.post('http://localhost:5074/api/main/medicos', form)
+    await axios.post('http://localhost:5074/api/main/register/medico', form)
     alert('Cadastro realizado com sucesso!')
-    router.push('/') // aqui pode usar o router normalmente
+    router.push('/')
   } catch (error) {
     alert('Erro ao cadastrar médico')
     console.error(error)

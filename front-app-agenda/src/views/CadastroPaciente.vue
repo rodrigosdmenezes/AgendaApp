@@ -35,15 +35,39 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+
+const router = useRouter()
 
 const nome = ref('')
 const cpf = ref('')
 const email = ref('')
 const senha = ref('')
 
-const cadastrar = () => {
-  alert(`teste: ${nome.value}`)
-  console.log({ nome: nome.value, cpf: cpf.value, email: email.value, senha: senha.value })
+async function cadastrar() {
+  try {
+    const response = await fetch('http://localhost:5074/api/main/register/pacientes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome: nome.value,
+        cpf: cpf.value,
+        email: email.value,
+        senha: senha.value
+      })
+    })
+
+    if (response.ok) {
+      alert('Cadastro realizado com sucesso!')
+      router.push('/')
+    } else {
+      alert('Erro ao cadastrar!')
+    }
+  } catch (error) {
+    console.error('Erro:', error)
+    alert('Erro ao cadastrar!')
+  }
 }
 </script>
 

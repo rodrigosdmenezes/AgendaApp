@@ -41,9 +41,9 @@ const login = async () => {
     })
 
     if (tipoUsuario.value === 'paciente') {
-      router.push('/dashboard-paciente')
+      router.push('/agendamento')
     } else {
-      router.push('/dashboard-medico')
+      router.push('/disponibilizar')
     }
 
   } catch (error) {
