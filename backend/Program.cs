@@ -39,15 +39,26 @@ builder.Services.AddScoped<IConsultaService, ConsultaService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:8081") // frontend Vue
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+builder.Services.AddControllers();
+
 var app = builder.Build();
+app.UseCors("PermitirFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -60,3 +71,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+app.UseCors("AllowAll");

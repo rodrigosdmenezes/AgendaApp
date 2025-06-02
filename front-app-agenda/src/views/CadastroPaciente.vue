@@ -1,34 +1,22 @@
 <template>
-  <div class="container">
-    <div class="cadastro-container-box">
-      <h1>Cadastro de Paciente</h1>
-      <form @submit.prevent="cadastrar">
-        <div class="form-group">
-          <label for="nome">Nome</label>
-          <input type="text" id="nome" v-model="nome" required />
-        </div>
+  <div class="login-container">
+    <div class="login-box">
+      <h1>AppAgenda</h1>
+      <select v-model="tipoUsuario">
+        <option value="paciente">Paciente</option>
+        <option value="medico">Médico</option>
+      </select>
 
-        <div class="form-group">
-          <label for="cpf">CPF</label>
-          <input type="text" id="cpf" v-model="cpf" required />
-        </div>
+      <input type="email" v-model="email" placeholder="Email" />
+      <input type="password" v-model="senha" placeholder="Senha" />
 
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" v-model="email" required />
-        </div>
+      <button @click="login">Entrar</button>
 
-        <div class="form-group">
-          <label for="senha">Senha</label>
-          <input type="password" id="senha" v-model="senha" required />
-        </div>
-
-        <button @click="cadastrar">Cadastrar</button>
-
-        <p class="login-link">
-          Já tem uma conta? <router-link to="/login">Entrar</router-link>
-        </p>
-      </form>
+      <p class="cadastro-msg">
+        Não tem login? Se cadastre como
+        <a href="#" @click.prevent="irCadastro('paciente')">Paciente</a> ou
+        <a href="#" @click.prevent="irCadastro('medico')">Médico</a>
+      </p>
     </div>
   </div>
 </template>
@@ -36,51 +24,57 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useAuthStore } from '@/store/authStore'
 
 const router = useRouter()
-
-const nome = ref('')
-const cpf = ref('')
+const tipoUsuario = ref('paciente')
 const email = ref('')
 const senha = ref('')
+const authStore = useAuthStore()
 
-async function cadastrar() {
+const login = async () => {
   try {
-    const response = await fetch('http://localhost:5074/api/main/register/pacientes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nome: nome.value,
-        cpf: cpf.value,
-        email: email.value,
-        senha: senha.value
-      })
+    await authStore.login({
+      email: email.value,
+      senha: senha.value,
+      tipo: tipoUsuario.value
     })
 
-    if (response.ok) {
-      alert('Cadastro realizado com sucesso!')
-      router.push('/')
+    if (tipoUsuario.value === 'paciente') {
+      router.push('/agendamento')
     } else {
-      alert('Erro ao cadastrar!')
+      router.push('/disponibilizar')
     }
+
   } catch (error) {
-    console.error('Erro:', error)
-    alert('Erro ao cadastrar!')
+    alert('Erro ao fazer login. Verifique seu e-mail e senha.')
+    console.error(error)
+  }
+}
+
+function irCadastro(tipo) {
+  if (tipo === 'paciente') {
+    router.push('/cadastro-paciente')
+  } else if (tipo === 'medico') {
+    router.push('/cadastro-medico')
   }
 }
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  font-family: 'Poppins', sans-serif;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+h1 {
+  text-align: center;
 }
 
-.cadastro-container-box {
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+  height: 100vh; 
+  font-family: 'Poppins', sans-serif;  
+}
+
+.login-box {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -90,41 +84,39 @@ async function cadastrar() {
   width: 300px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+input,
+select {
+  padding: 10px;
+  font-size: 1rem;
 }
 
 button {
-  width: 100%;
   background-color: #40e0d0;
-  /* Verde Tiffany */
   color: white;
-  border: none;
   padding: 10px;
-  font-weight: bold;
+  border: none;
   cursor: pointer;
-  border-radius: 4px;
+  font-weight: bold;
 }
 
-.login-link {
-  margin-top: 16px;
-  text-align: center;
+.cadastro-msg {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #444;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}
+
+.cadastro-msg a {
+  color: #40e0d0;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.cadastro-msg a:hover {
+  color: #2bb3a6;
+  text-decoration: underline;
 }
 </style>

@@ -2,6 +2,7 @@ using AgendaApp.Entities;
 using AgendaApp.Infra.Data;
 using AgendaApp.src.Dtos;
 using AgendaApp.src.Interfaces;
+using backend.src.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -75,7 +76,7 @@ namespace AgendaApp.src.Services
                 Id = consulta.Id,
                 MedicoId = consulta.MedicoId,
                 NomeMedico = nomeMedico,
-                PacienteId = null,
+                PacienteId = pacienteId,
                 DataHora = consulta.DataHora,
                 Status = consulta.Status
             };
@@ -104,6 +105,25 @@ namespace AgendaApp.src.Services
 
             return consultas.Select(c => MapToResponse(c));
         }
+
+        public async Task<IEnumerable<MedicoDisponivelDto>> ObterMedicosComHorariosDisponiveisAsync()
+        {
+            var medicosComHorarios = await _context.Consultas
+                .Where(c => c.Status == ConsultaStatus.Disponivel)
+                .Include(c => c.Medico)
+                .GroupBy(c => new { c.MedicoId, c.Medico.Nome, c.Medico.Especialidade})
+                .Select(g => new MedicoDisponivelDto
+                {
+                    MedicoId = g.Key.MedicoId,
+                    Nome = g.Key.Nome,
+                    Especialidade = g.Key.Especialidade,
+                    HorariosDisponiveis = g.Select(c => c.DataHora).OrderBy(dt => dt).ToList()
+                })
+                .ToListAsync();
+
+            return medicosComHorarios;
+        }
+
 
         // CANCELAR CONSULTA
         public async Task CancelarConsultaAsync(Guid consultaId, Guid usuarioId, string tipoUsuario)

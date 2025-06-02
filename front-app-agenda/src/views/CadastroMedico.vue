@@ -62,7 +62,7 @@ const cadastrar = async () => {
   try {
     await axios.post('http://localhost:5074/api/main/register/medico', form)
     alert('Cadastro realizado com sucesso!')
-    router.push('/')
+    router.push('/login')
   } catch (error) {
     alert('Erro ao cadastrar médico')
     console.error(error)

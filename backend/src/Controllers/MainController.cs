@@ -57,17 +57,13 @@ namespace AgendaApp.Controllers
         }
 
         // ENDPOINTS PARA AS CONSULTAS
-        [Authorize(Roles = "Medico")]
         [HttpPost("consulta/disponibilizar")]
         public async Task<IActionResult> DisponibilizarHorario([FromBody] ConsultaCreateRequest request)
         {
-            var medicoId = GetUserId();
-            request.MedicoId = medicoId;
             var response = await _consultaService.DisponibilizarHorarioAsync(request);
             return Ok(response);
         }
 
-        [Authorize(Roles = "Paciente")]
         [HttpPost("consulta")]
         public async Task<IActionResult> CriarConsulta([FromBody] ConsultaCreateRequest request)
         {
@@ -75,6 +71,14 @@ namespace AgendaApp.Controllers
             var result = await _consultaService.AgendarConsultaAsync(request, pacienteId);
             return Ok(result);
         }
+
+        [HttpGet("medicos/disponiveis")]
+        public async Task<IActionResult> ObterMedicosDisponiveis()
+        {
+            var medicos = await _consultaService.ObterMedicosComHorariosDisponiveisAsync();
+            return Ok(medicos);
+        }
+
 
         [Authorize]
         [HttpGet("consulta")]

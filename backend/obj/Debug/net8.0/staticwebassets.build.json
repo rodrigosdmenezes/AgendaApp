@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "EZVEFcVhvLMDDPijrjyytFP2TzvmRyhR3NYCn9b4xLE=",
+  "Hash": "gsyfcFLLx28dnP8l+MowajaOOkZXcf9pqVT3m/dgcIE=",
   "Source": "AgendaApp",
   "BasePath": "_content/AgendaApp",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }
