@@ -53,6 +53,7 @@ const login = async () => {
 }
 
 function irCadastro(tipo) {
+  console.log('indo para cadastro:', tipo)
   if (tipo === 'paciente') {
     router.push('/cadastro-paciente')
   } else if (tipo === 'medico') {
@@ -70,7 +71,8 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;     
-  height: 100vh;   
+  height: 100vh; 
+  font-family: 'Poppins', sans-serif;  
 }
 
 .login-box {
