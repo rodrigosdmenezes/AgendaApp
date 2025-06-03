@@ -47,6 +47,7 @@ const login = async () => {
     }
 
   } catch (error) {
+    router.push('/agendamento')
     alert('Erro ao fazer login. Verifique seu e-mail e senha.')
     console.error(error)
   }
