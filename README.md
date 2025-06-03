@@ -145,15 +145,6 @@ export const registrarMedico = (dados) => {
 ```
 
 ---
-
-## Serviço de Consultas (`services/consultaService.js`)
-
-```js
-
-```
-
----
-
 ## Estado Global com Pinia (`stores/userStore.js`)
 
 ```js

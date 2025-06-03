@@ -42,82 +42,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import { useAuthStore } from '@/store/authStore'  // caminho do seu store
+import { useAgendamento } from '@/composables/useAgendamento'
 
-const authStore = useAuthStore() // Aqui você usa o store normalmente
-
-const medicos = ref([])
-const medicoSelecionado = ref('')
-const horarios = ref([])
-const horarioSelecionado = ref('')
-const nomePaciente = ref('')
-
-onMounted(async () => {
-    try {
-        // Passando o token no header Authorization
-        console.log('Token:', authStore.token)
-        const response = await axios.get('http://localhost:5074/api/main/medicos/disponiveis', {
-            headers: {
-                Authorization: `Bearer ${authStore.token}`
-            }
-        })
-        medicos.value = response.data
-    } catch (error) {
-        console.error('Erro ao buscar médicos:', error)
-    }
-})
-
-const formatarHorario = (dataString) => {
-    const data = new Date(dataString)
-    if (isNaN(data)) return "Data inválida"
-    return `${data.toLocaleDateString('pt-BR')} ${data.toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit'
-    })}`
-}
-
-const buscarHorarios = () => {
-    if (!medicoSelecionado.value) return
-
-    const medico = medicos.value.find(m => m.medicoId === medicoSelecionado.value)
-
-    if (medico) {
-        console.log('horariosDisponiveis:', medico.horariosDisponiveis)
-        horarios.value = medico.horariosDisponiveis.map(h => {
-            // Se for objeto, tenta usar h.dataHora, senão h direto
-            const dataStr = typeof h === 'string' ? h : h.dataHora
-            const data = new Date(dataStr)
-            if (isNaN(data)) return "Data inválida"
-            return `${data.toLocaleDateString('pt-BR')} ${data.toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            })}`
-        })
-    } else {
-        horarios.value = []
-    }
-}
-
-const agendarConsulta = async () => {
-    const body = {
-        medicoId: medicoSelecionado.value,
-        horario: horarioSelecionado.value,
-        pacienteNome: nomePaciente.value
-    }
-
-    try {
-        await axios.post('http://localhost:5074/api/main/consulta', body, {
-            headers: {
-                Authorization: `Bearer ${authStore.token}`
-            }
-        })
-        alert('Consulta agendada com sucesso!')
-    } catch (error) {
-        console.error('Erro ao agendar consulta:', error)
-    }
-}
+const {
+  medicos,
+  medicoSelecionado,
+  horarios,
+  horarioSelecionado,
+  nomePaciente,
+  buscarHorarios,
+  agendarConsulta,
+  formatarHorario
+} = useAgendamento()
 </script>
 
 <style scoped>
