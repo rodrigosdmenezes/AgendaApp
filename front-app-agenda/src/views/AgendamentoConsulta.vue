@@ -161,7 +161,6 @@ button {
 
 .ver-consultas{
     color: #40e0d0;
-    display: flex;
-    justify-content: center
+    display: flex
 }
 </style>

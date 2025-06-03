@@ -14,7 +14,7 @@ const routes = [
   { path: '/agendamento', component: AgendamentoConsulta },
   { path: '/disponibilizar', component: DisponibilizarHorarios },
   { path: '/minhas-consultas', name: 'MinhasConsultas', component: MinhasConsultas },
-  { path: '/consultas-agendadas', name: 'MinhasConsultas', component: ConsultasMedico }
+  { path: '/consultas-agendadas', name: 'ConsultasAgendadas', component: ConsultasMedico }
   // outras rotas...
 ]
 
