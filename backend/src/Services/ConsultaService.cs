@@ -17,7 +17,7 @@ namespace AgendaApp.src.Services
             _context = context;
         }
 
-        // MÉTODO PARA O MÉDICO DISPONIBILIZAR HORÁRIO
+        // Método para o médico disponibilizar horário.
         public async Task<ConsultaResponse> DisponibilizarHorarioAsync(ConsultaCreateRequest request)
         {
             var consultaExiste = await _context.Consultas.FirstOrDefaultAsync(c =>
@@ -47,7 +47,7 @@ namespace AgendaApp.src.Services
             return MapToResponse(consulta);
         }
 
-        // MÉTODO PARA O PACIENTE AGENDAR UMA CONSULTA
+        // Método para o paciente agendar uma consulta.
         public async Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest request, Guid pacienteId)
         {
             var dataHoraUtc = DateTime.SpecifyKind(request.DataHora, DateTimeKind.Utc);
@@ -61,7 +61,7 @@ namespace AgendaApp.src.Services
             if (consulta == null)
                 throw new Exception("Consulta não disponível.");
 
-            consulta.PacienteId = null; // Se não for usar ID de paciente agora
+            consulta.PacienteId = null;
             consulta.Status = ConsultaStatus.Agendada;
 
             await _context.SaveChangesAsync();
@@ -81,37 +81,36 @@ namespace AgendaApp.src.Services
                 Status = consulta.Status
             };
         }
-        // BUSCAR CONSULTA POR ID
-        public async Task<ConsultaResponse> BuscarPorIdAsync(Guid id)
-        {
-            var consulta = await _context.Consultas
-                .Include(c => c.Medico)
-                .Include(c => c.Paciente)
-                .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (consulta == null)
-                throw new Exception("Consulta não encontrada.");
-
-            return MapToResponse(consulta);
-        }
-
-        // LISTAR TODAS AS CONSULTAS
-        public async Task<IEnumerable<ConsultaResponse>> ListarTodasAsync()
+        // Método para Buscar consulta por id do paciente.
+        public async Task<IEnumerable<ConsultaResponse>> ListarPorPacienteAsync(Guid pacienteId)
         {
             var consultas = await _context.Consultas
                 .Include(c => c.Medico)
                 .Include(c => c.Paciente)
+                .Where(c => c.PacienteId == pacienteId)
                 .ToListAsync();
 
             return consultas.Select(c => MapToResponse(c));
         }
 
+        // Metodo para listar todas as consultas agendadas para os médicos.
+        public async Task<IEnumerable<ConsultaResponse>> ListarPorMedicoAsync(Guid medicoId)
+        {
+            var consultas = await _context.Consultas
+                .Include(c => c.Medico)
+                .Include(c => c.Paciente)
+                .Where(c => c.MedicoId == medicoId)
+                .ToListAsync();
+
+            return consultas.Select(c => MapToResponse(c));
+        }
+        //Método para listar médicos com horarios disponiveis.
         public async Task<IEnumerable<MedicoDisponivelDto>> ObterMedicosComHorariosDisponiveisAsync()
         {
             var medicosComHorarios = await _context.Consultas
                 .Where(c => c.Status == ConsultaStatus.Disponivel)
                 .Include(c => c.Medico)
-                .GroupBy(c => new { c.MedicoId, c.Medico.Nome, c.Medico.Especialidade})
+                .GroupBy(c => new { c.MedicoId, c.Medico.Nome, c.Medico.Especialidade })
                 .Select(g => new MedicoDisponivelDto
                 {
                     MedicoId = g.Key.MedicoId,
@@ -125,7 +124,7 @@ namespace AgendaApp.src.Services
         }
 
 
-        // CANCELAR CONSULTA
+        // Método para cancelar consulta
         public async Task CancelarConsultaAsync(Guid consultaId, Guid usuarioId, string tipoUsuario)
         {
             var consulta = await _context.Consultas
@@ -153,7 +152,7 @@ namespace AgendaApp.src.Services
             await _context.SaveChangesAsync();
         }
 
-        // MÉTODO AUXILIAR PARA MAPEAR ENTIDADE PARA RESPONSE DTO
+        // Método auxiliar para mapear entidade para response dto
         private ConsultaResponse MapToResponse(Consulta consulta)
         {
             return new ConsultaResponse

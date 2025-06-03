@@ -8,9 +8,10 @@ namespace AgendaApp.src.Interfaces
     {
         Task<ConsultaResponse> DisponibilizarHorarioAsync(ConsultaCreateRequest request);
         Task<ConsultaResponse> ObterConsultaPorIdAsync(Guid id);
-        Task<IEnumerable<ConsultaResponse>> ListarConsultasAsync();
+        Task<IEnumerable<ConsultaResponse>> ListarPorMedicoAsync(Guid medicoId);
         Task<bool> CancelarConsultaAsync(Guid consultaId, Guid usuarioId, string tipoUsuario);
         Task<ConsultaResponse> AgendarConsultaAsync(ConsultaCreateRequest request, Guid pacienteId);
         Task<IEnumerable<MedicoDisponivelDto>> ObterMedicosComHorariosDisponiveisAsync();
+        Task<IEnumerable<ConsultaResponse>> ListarPorPacienteAsync(Guid pacienteId);
     }
 }

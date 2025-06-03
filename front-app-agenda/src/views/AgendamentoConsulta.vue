@@ -33,6 +33,10 @@
 
             <!-- Botão de agendamento -->
             <button @click="agendarConsulta" :disabled="!horarioSelecionado">Confirmar Consulta</button>
+            <router-link to="/minhas-consultas" class="ver-consultas">
+                Ver minhas consultas
+            </router-link>
+
         </div>
     </div>
 </template>
@@ -153,5 +157,11 @@ button {
     cursor: pointer;
     font-weight: bold;
     border-radius: 8px;
+}
+
+.ver-consultas{
+    color: #40e0d0;
+    display: flex;
+    justify-content: center
 }
 </style>

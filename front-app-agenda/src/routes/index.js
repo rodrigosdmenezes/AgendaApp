@@ -4,6 +4,8 @@ import CadastroPaciente from '@/views/CadastroPaciente.vue'
 import CadastroMedico from '@/views/CadastroMedico.vue'
 import AgendamentoConsulta from '@/views/AgendamentoConsulta.vue'
 import DisponibilizarHorarios from '@/views/DisponibilizarHorarios.vue'
+import MinhasConsultas from '@/views/MinhasConsultas.vue'
+import ConsultasMedico from '@/views/ConsultasMedico.vue'
 
 const routes = [
   { path: '/', component: LoginView },
@@ -11,6 +13,8 @@ const routes = [
   { path: '/cadastro-medico', component: CadastroMedico },
   { path: '/agendamento', component: AgendamentoConsulta },
   { path: '/disponibilizar', component: DisponibilizarHorarios },
+  { path: '/minhas-consultas', name: 'MinhasConsultas', component: MinhasConsultas },
+  { path: '/consultas-agendadas', name: 'MinhasConsultas', component: ConsultasMedico }
   // outras rotas...
 ]
 

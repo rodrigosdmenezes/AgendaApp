@@ -24,6 +24,9 @@
                     <button @click="removerHorario(index)">Remover</button>
                 </li>
             </ul>
+            <router-link to="/consultas-agendadas" class="ver-consultas">
+                Ver pacientes agendados
+            </router-link>
         </div>
     </div>
 </template>

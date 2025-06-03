@@ -26,26 +26,7 @@ namespace AgendaApp.Controllers
         }
 
         // ENDPOINTS PARA AUTENTICAÇÃO E LOGIN
-        [HttpPost("register/paciente")]
-        public async Task<IActionResult> RegisterPaciente([FromBody] RegisterPacienteRequest request)
-        {
-            var result = await _authService.RegisterPacienteAsync(request);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(result.Token);
-        }
-
-        [HttpPost("register/medico")]
-        public async Task<IActionResult> RegisterMedico([FromBody] RegisterMedicoRequest request)
-        {
-            var result = await _authService.RegisterMedicoAsync(request);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(result.Token);
-        }
-
+        // Endpoint para realizar o login. Url: http://localhost:5074/api/main/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -56,7 +37,31 @@ namespace AgendaApp.Controllers
             return Ok(result.Token);
         }
 
+        //Endpoint para cadastrar paciente. Url: http://localhost:5074/api/main/register/paciente
+        [HttpPost("register/paciente")]
+        public async Task<IActionResult> RegisterPaciente([FromBody] RegisterPacienteRequest request)
+        {
+            var result = await _authService.RegisterPacienteAsync(request);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result.Token);
+        }
+
+        //Endpoint para cadastrar medico. Url: http://localhost:5074/api/main/register/medico
+        [HttpPost("register/medico")]
+        public async Task<IActionResult> RegisterMedico([FromBody] RegisterMedicoRequest request)
+        {
+            var result = await _authService.RegisterMedicoAsync(request);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result.Token);
+        }
+
         // ENDPOINTS PARA AS CONSULTAS
+
+        //Endpoint para os médicos disponibilizar as datas. Url: http://localhost:5074/api/main/consulta/disponibiliza
         [HttpPost("consulta/disponibilizar")]
         public async Task<IActionResult> DisponibilizarHorario([FromBody] ConsultaCreateRequest request)
         {
@@ -64,6 +69,7 @@ namespace AgendaApp.Controllers
             return Ok(response);
         }
 
+        //Endpoint para os pacientes agendar as consultas. Url: http://localhost:5074/api/main/consulta
         [HttpPost("consulta")]
         public async Task<IActionResult> CriarConsulta([FromBody] ConsultaCreateRequest request)
         {
@@ -72,6 +78,7 @@ namespace AgendaApp.Controllers
             return Ok(result);
         }
 
+        //Endpoint para trazer os médicos com hórarios disponiveis. Url: http://localhost:5074/api/main/medicos/disponiveis
         [HttpGet("medicos/disponiveis")]
         public async Task<IActionResult> ObterMedicosDisponiveis()
         {
@@ -81,13 +88,24 @@ namespace AgendaApp.Controllers
 
 
         [Authorize]
-        [HttpGet("consulta")]
-        public async Task<IActionResult> ListarConsultas()
+
+        //Endpoint para exebir as consultas de cada usuário paciente. Url: http://localhost:5074/api/main/consulta/paciente/{pacienteId}
+        [HttpGet("consulta/paciente/{pacienteId}")]
+        public async Task<IActionResult> ListarConsultasPorPaciente(Guid pacienteId)
         {
-            var result = await _consultaService.ListarConsultasAsync();
+            var result = await _consultaService.ListarPorPacienteAsync(pacienteId);
             return Ok(result);
         }
 
+        //Endpoint para exebir as consultas agendadas para os médicos. Url: http://localhost:5074/api/main/consulta/medico/{medicoId}
+        [HttpGet("consulta/medico/{medicoId}")]
+        public async Task<IActionResult> ConsultasPorMedico(Guid medicoId)
+        {
+            var result = await _consultaService.ListarPorMedicoAsync(medicoId);
+            return Ok(result);
+        }
+
+        //Endpoint para cancelar as consultas
         [Authorize]
         [HttpPut("consulta/cancelar/{id}")]
         public async Task<IActionResult> CancelarConsultas(Guid id)
